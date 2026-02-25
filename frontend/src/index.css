@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --f1-red:    #E8002D;
+  --f1-orange: #FF8000;
+  --f1-bg:     #050505;
+  --f1-card:   #0F0F0F;
+  --f1-border: #1A1A1A;
+  --f1-muted:  #2A2A2A;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--f1-bg);
+  color: #E5E5E5;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  /* F1 grid line background */
+  background-image:
+    linear-gradient(rgba(232,0,45,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,0,45,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  min-height: 100vh;
+}
+
+/* ── Scrollbar ────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--f1-bg); }
+::-webkit-scrollbar-thumb { background: var(--f1-muted); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--f1-red); }
+
+/* ── Typography ───────────────────────────────── */
+.font-orbitron { font-family: 'Orbitron', sans-serif; }
+.font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+
+/* ── Gradient text ────────────────────────────── */
+.text-f1-gradient {
+  background: linear-gradient(90deg, var(--f1-red), var(--f1-orange));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Card ─────────────────────────────────────── */
+.f1-card {
+  background: var(--f1-card);
+  border: 1px solid var(--f1-border);
+  border-radius: 8px;
+}
+
+.f1-card-glass {
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+/* ── Gradient bar ─────────────────────────────── */
+.bar-gradient {
+  background: linear-gradient(90deg, var(--f1-red), var(--f1-orange));
+}
+
+/* ── Animated progress bar ────────────────────── */
+.progress-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--f1-muted);
+  overflow: hidden;
+  position: relative;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s ease-out;
+}
+
+/* ── Team pill ────────────────────────────────── */
+.team-pill {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Tab buttons ──────────────────────────────── */
+.tab-btn {
+  padding: 6px 20px;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  color: #888;
+  background: transparent;
+}
+.tab-btn:hover { color: #ccc; border-color: #333; }
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(232,0,45,0.2), rgba(255,128,0,0.2));
+  border-color: rgba(232,0,45,0.5);
+  color: #fff;
+}
+
+/* ── Circuit pill ─────────────────────────────── */
+.circuit-pill {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid #1A1A1A;
+  background: #0F0F0F;
+  color: #666;
+  white-space: nowrap;
+}
+.circuit-pill:hover { border-color: #333; color: #ccc; }
+.circuit-pill.active {
+  background: linear-gradient(135deg, rgba(232,0,45,0.25), rgba(255,128,0,0.25));
+  border-color: rgba(255,128,0,0.6);
+  color: #fff;
+}
+
+/* ── Driver row ───────────────────────────────── */
+.driver-row {
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.driver-row:hover { background: rgba(255,255,255,0.03); border-color: #1A1A1A; }
+.driver-row.selected {
+  background: rgba(255,128,0,0.06);
+  border-color: rgba(255,128,0,0.3);
+}
+
+/* ── Badge ────────────────────────────────────── */
+.badge {
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.badge-wdc { background: rgba(255,215,0,0.15); color: #FFD700; border: 1px solid rgba(255,215,0,0.3); }
+.badge-rookie { background: rgba(100,196,255,0.15); color: #64C4FF; border: 1px solid rgba(100,196,255,0.3); }
+.badge-transfer { background: rgba(255,87,188,0.15); color: #FF87BC; border: 1px solid rgba(255,87,188,0.3); }
+
+/* ── Podium ───────────────────────────────────── */
+.podium-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 8px 8px 0 0;
+  padding: 20px 16px 12px;
+  transition: transform 0.2s;
+}
+.podium-block:hover { transform: translateY(-4px); }
+
+/* ── Number display ───────────────────────────── */
+.driver-number-big {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 30px currentColor;
+}
+
+/* ── Recharts custom ─────────────────────────── */
+.recharts-tooltip-wrapper { outline: none !important; }
+.custom-tooltip {
+  background: rgba(15,15,15,0.95);
+  border: 1px solid #2A2A2A;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.85rem;
+}
+
+/* ── Loading terminal ─────────────────────────── */
+.terminal-line { font-family: 'Courier New', monospace; font-size: 0.85rem; }
+.terminal-cursor::after {
+  content: '_';
+  animation: blink 1s step-start infinite;
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 768px) {
+  .driver-number-big { font-size: 2.5rem; }
+  .podium-block { padding: 12px 8px 8px; }
+}
