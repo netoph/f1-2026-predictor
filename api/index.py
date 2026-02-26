@@ -1,25 +1,21 @@
 """
 index.py — FastAPI main application for F1 2026 Predictor API.
-Wrapped with Mangum for Vercel Serverless Functions.
+Deployed on Vercel as a serverless Python function.
 """
 
 import sys
 import os
 
-# Ensure sibling modules (data, ratings, monte_carlo, jolpica) are importable
-# when running as a Vercel serverless function
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Ensure sibling modules are importable in Vercel's serverless environment
+_api_dir = os.path.dirname(os.path.abspath(__file__))
+if _api_dir not in sys.path:
+    sys.path.insert(0, _api_dir)
 
-import asyncio
-from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
 from data import CIRCUITS, GRID_2026, TEAMS_2026
-from ratings import get_ratings
-from monte_carlo import run_race_simulation, run_championship_simulation, backtest_model
-from jolpica import fetch_race_results
 
 app = FastAPI(
     title="F1 2026 Predictor API",
@@ -55,6 +51,7 @@ async def ratings_endpoint():
     Returns empirical driver & car ratings calculated from Jolpica data.
     Cached in memory for 1 hour.
     """
+    from ratings import get_ratings
     data = await get_ratings()
     return {
         "driver_ratings": data["driver_ratings"],
@@ -86,17 +83,16 @@ async def race_prediction(
     if not circuit:
         raise HTTPException(status_code=404, detail=f"Circuit for round {round} not found")
 
+    from ratings import get_ratings
+    from monte_carlo import run_race_simulation
     data = await get_ratings()
-    car_ratings = data["car_ratings"]
-    driver_ratings = data["driver_ratings"]
 
     result = run_race_simulation(
         circuit_round=round,
         iters=iters,
-        car_ratings=car_ratings,
-        driver_ratings=driver_ratings,
+        car_ratings=data["car_ratings"],
+        driver_ratings=data["driver_ratings"],
     )
-
     return result
 
 
@@ -107,16 +103,15 @@ async def championship_prediction(
     """
     Simulate all 24 GPs and project full championship standings.
     """
+    from ratings import get_ratings
+    from monte_carlo import run_championship_simulation
     data = await get_ratings()
-    car_ratings = data["car_ratings"]
-    driver_ratings = data["driver_ratings"]
 
     result = run_championship_simulation(
         iters=iters,
-        car_ratings=car_ratings,
-        driver_ratings=driver_ratings,
+        car_ratings=data["car_ratings"],
+        driver_ratings=data["driver_ratings"],
     )
-
     return result
 
 
@@ -128,11 +123,11 @@ async def backtest_endpoint(
     Validate model against 2024 historical results.
     Returns accuracy metrics: P1 hit rate, Brier score, Spearman rho.
     """
-    data = await get_ratings()
-    car_ratings = data["car_ratings"]
-    driver_ratings = data["driver_ratings"]
+    from ratings import get_ratings
+    from monte_carlo import backtest_model
+    from jolpica import fetch_race_results
 
-    # Fetch 2024 actuals for validation
+    data = await get_ratings()
     historical_results = await fetch_race_results(2024)
 
     if not historical_results:
@@ -143,11 +138,10 @@ async def backtest_endpoint(
 
     metrics = backtest_model(
         historical_results=historical_results,
-        car_ratings=car_ratings,
-        driver_ratings=driver_ratings,
+        car_ratings=data["car_ratings"],
+        driver_ratings=data["driver_ratings"],
         iters=iters,
     )
-
     return {"metrics": metrics, "note": "Backtested against 2024 actuals (out-of-sample)"}
 
 
@@ -157,5 +151,5 @@ async def circuits_list():
     return {"circuits": CIRCUITS}
 
 
-# Vercel serverless handler
+# Vercel serverless handler (Mangum wraps ASGI app as AWS Lambda-compatible handler)
 handler = Mangum(app, lifespan="off")
