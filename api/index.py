@@ -3,6 +3,13 @@ index.py — FastAPI main application for F1 2026 Predictor API.
 Wrapped with Mangum for Vercel Serverless Functions.
 """
 
+import sys
+import os
+
+# Ensure sibling modules (data, ratings, monte_carlo, jolpica) are importable
+# when running as a Vercel serverless function
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 import asyncio
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
